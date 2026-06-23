@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pantalla LED Hipódromo de Chile — Publimetal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --gold-dim: rgba(201,168,76,0.15);
+      --black: #0A0A0A;
+      --dark: #111111;
+      --panel: #161616;
+      --panel2: #1C1C1C;
+      --white: #F5F5F0;
+      --muted: #888880;
+      --led-green: #00FF88;
+      --led-blue: #00AAFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-cta {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--gold);
+      padding: 8px 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold); color: var(--black); }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.3;
+      z-index: 0;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 60%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(0,255,136,0.04) 0%, transparent 60%);
+      z-index: 0;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.1) 40%, rgba(10,10,10,0.7) 100%);
+      z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 860px; animation: fadeUp 1s ease both 0.2s; }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+      padding: 6px 16px;
+      border: 1px solid rgba(201,168,76,0.4);
+      background: rgba(201,168,76,0.06);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 3vw, 32px);
+      font-weight: 400;
+      color: rgba(245,245,240,0.7);
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+    .hero-desc {
+      font-size: 15px;
+      color: rgba(245,245,240,0.55);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      background: var(--gold);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 36px;
+      display: inline-block;
+      transition: background 0.2s, transform 0.15s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-ghost {
+      border: 1px solid rgba(245,245,240,0.3);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 36px;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+      background: none;
+      cursor: pointer;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── STATS STRIP ─── */
+    .stats-strip {
+      background: var(--panel);
+      border-top: 1px solid rgba(201,168,76,0.2);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      text-align: center;
+    }
+    .stat-item {
+      padding: 40px 24px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 100px 48px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+    .section-body {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(245,245,240,0.6);
+      line-height: 1.9;
+      max-width: 640px;
+    }
+
+    /* ─── ANTES / DESPUÉS ─── */
+    .antes-despues { background: var(--dark); }
+    .ad-intro { margin-bottom: 56px; }
+    .ad-grid {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      gap: 0;
+      align-items: center;
+    }
+    .ad-card {
+      background: var(--panel2);
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+    .ad-card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ad-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+    }
+    .ad-badge.antes { background: rgba(255,255,255,0.08); color: var(--muted); }
+    .ad-badge.despues { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .ad-card-title { font-size: 14px; font-weight: 500; color: var(--white); }
+    .ad-visual {
+      aspect-ratio: 16/10;
+      background: var(--panel);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad-visual img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+    }
+    .ad-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+    }
+    .ad-placeholder svg { width: 36px; height: 36px; stroke: var(--muted); fill: none; stroke-width: 1; }
+    .ad-placeholder span { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
+    .ad-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad-arrow-circle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad-arrow-circle svg { width: 18px; height: 18px; stroke: var(--black); fill: none; stroke-width: 2.5; }
+
+    /* ─── VISUALIZACIÓN EN RECINTO ─── */
+    .visualizacion { background: var(--black); padding: 0; }
+    .viz-hero {
+      position: relative;
+      width: 100%;
+      background: var(--panel);
+      overflow: hidden;
+    }
+    .viz-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/7;
+      overflow: hidden;
+    }
+    .viz-image-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Placeholder si no hay imagen */
+    .viz-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #0d1a2a 0%, #0a1520 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    /* Simulación de la pantalla en el hipódromo */
+    .viz-sim-screen {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #001a35 0%, #002a50 100%);
+      border: 2px solid rgba(0,170,255,0.5);
+      box-shadow: 0 0 60px rgba(0,170,255,0.2), 0 0 120px rgba(0,170,255,0.08);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .viz-sim-screen-inner {
+      text-align: center;
+      color: rgba(0,200,255,0.8);
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-shadow: 0 0 20px rgba(0,200,255,0.6);
+    }
+    .viz-sim-tablero {
+      position: absolute;
+      bottom: 28%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 8%;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 16px;
+    }
+    .viz-sim-dot {
+      width: 20px; height: 8px;
+      border-radius: 2px;
+    }
+
+    .viz-caption {
+      background: var(--panel);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 32px 48px;
+    }
+    .viz-caption-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 32px;
+    }
+    .viz-caption-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2vw, 26px);
+      font-style: italic;
+      color: rgba(245,245,240,0.85);
+      max-width: 600px;
+    }
+    .viz-caption-text strong { font-style: normal; color: var(--gold); }
+    .viz-tags { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+    .viz-tag {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      background: var(--gold-dim);
+      white-space: nowrap;
+    }
+
+    /* Cards de atributos bajo la imagen */
+    .viz-cards-section { background: var(--black); padding: 72px 48px; }
+    .viz-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; max-width: 1100px; margin: 40px auto 0; }
+    .viz-card {
+      background: var(--panel);
+      padding: 36px 32px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .viz-card:hover { background: var(--panel2); border-color: rgba(201,168,76,0.2); }
+    .viz-card-icon {
+      width: 40px; height: 40px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .viz-card-icon svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+    .viz-card-title { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+    .viz-card-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.8; }
+
+    /* ─── MODELO 3D ─── */
+    .modelo3d { background: var(--dark); }
+    .modelo3d-header { margin-bottom: 48px; }
+    .modelo-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+    .modelo-tab {
+      padding: 12px 24px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+    .modelo-tab.active {
+      background: var(--gold-dim);
+      border-color: rgba(201,168,76,0.4);
+      color: var(--gold);
+    }
+    .modelo-tab-label {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .modelo-viewer {
+      position: relative;
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+    .modelo-viewer iframe {
+      width: 100%;
+      height: 560px;
+      border: none;
+      display: block;
+    }
+    /* Placeholder cuando no hay iframe */
+    .modelo-placeholder {
+      width: 100%;
+      height: 560px;
+      background: linear-gradient(135deg, #0d1520 0%, #0a1018 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+    }
+    .modelo-placeholder-icon { color: var(--gold); opacity: 0.5; }
+    .modelo-placeholder-icon svg { width: 64px; height: 64px; stroke: var(--gold); fill: none; stroke-width: 1; }
+    .modelo-placeholder-text {
+      text-align: center;
+    }
+    .modelo-placeholder-text p {
+      font-size: 15px; color: var(--muted); margin-bottom: 8px;
+    }
+    .modelo-placeholder-text code {
+      font-size: 12px; color: rgba(201,168,76,0.6);
+      font-family: monospace; letter-spacing: 0.1em;
+      background: rgba(201,168,76,0.06);
+      padding: 4px 12px; border-radius: 2px;
+    }
+    .modelo-corner {
+      position: absolute;
+      width: 24px; height: 24px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.4;
+    }
+    .modelo-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+    .modelo-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+    .modelo-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+    .modelo-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+    .modelo-info {
+      margin-top: 2px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .modelo-info-card {
+      background: var(--panel);
+      padding: 20px 24px;
+      border: 1px solid rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .modelo-info-card:hover { border-color: rgba(201,168,76,0.2); }
+    .modelo-info-card.active { border-color: rgba(201,168,76,0.4); background: var(--gold-dim); }
+    .modelo-info-num {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
+    }
+    .modelo-info-title { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+    .modelo-info-desc { font-size: 12px; font-weight: 300; color: var(--muted); }
+
+    /* ─── PROYECTO (specs) ─── */
+    .proyecto { background: var(--dark); }
+    .proyecto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 64px;
+    }
+    .proyecto-visual {
+      position: relative;
+      background: var(--panel2);
+      border: 1px solid rgba(201,168,76,0.15);
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .led-frame {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--black); position: relative;
+    }
+    .led-screen {
+      width: 85%; height: 70%;
+      background: linear-gradient(135deg, #001a2e 0%, #002d4a 50%, #001a2e 100%);
+      border: 2px solid rgba(0,170,255,0.4);
+      box-shadow: 0 0 30px rgba(0,170,255,0.15), inset 0 0 40px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      animation: ledPulse 3s ease-in-out infinite;
+    }
+    .led-screen::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,170,255,0.03) 4px, rgba(0,170,255,0.03) 5px);
+    }
+    .led-screen-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700;
+      color: rgba(0,200,255,0.9);
+      letter-spacing: 0.1em; text-align: center;
+      text-shadow: 0 0 20px rgba(0,200,255,0.6); z-index: 1;
+    }
+    .led-pillar {
+      position: absolute; bottom: 0;
+      width: 18px; height: 25%;
+      background: linear-gradient(to bottom, #333, #1a1a1a);
+      left: 50%; transform: translateX(-50%);
+    }
+    .led-base {
+      position: absolute; bottom: 0;
+      width: 60%; height: 12px;
+      background: #1a1a1a; left: 50%; transform: translateX(-50%);
+      border-top: 2px solid #333;
+    }
+    .proyecto-corner {
+      position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--gold); border-style: solid;
+    }
+    .proyecto-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+    .proyecto-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+    .proyecto-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+    .proyecto-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+    .specs-list { margin-top: 0; }
+    .spec-row {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .spec-row:first-child { border-top: 1px solid rgba(255,255,255,0.06); }
+    .spec-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .spec-icon svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+    .spec-name { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+    .spec-val { font-size: 14px; font-weight: 300; color: rgba(245,245,240,0.7); }
+
+    /* ─── VENTAJAS ─── */
+    .ventajas { background: var(--black); }
+    .ventajas-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; margin-top: 64px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .ventaja-card {
+      background: var(--panel); padding: 40px 32px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .ventaja-card:hover { background: var(--panel2); border-color: rgba(201,168,76,0.2); }
+    .ventaja-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 64px; font-weight: 900; line-height: 1;
+      color: rgba(201,168,76,0.12); margin-bottom: 20px; display: block;
+    }
+    .ventaja-title { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 12px; }
+    .ventaja-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.8; }
+
+    /* ─── EXPERIENCIA ─── */
+    .experiencia { background: var(--panel); }
+    .exp-intro {
+      display: grid; grid-template-columns: 1.2fr 1fr;
+      gap: 80px; align-items: start; margin-bottom: 64px;
+    }
+    .exp-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    .exp-item {
+      background: var(--black); padding: 24px 28px;
+      border-left: 2px solid var(--gold-dim);
+      transition: border-color 0.2s;
+    }
+    .exp-item:hover { border-left-color: var(--gold); }
+    .exp-item-place { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+    .exp-item-type { font-size: 11px; font-weight: 400; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .exp-quote {
+      background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.25);
+      padding: 36px; margin-top: 48px;
+    }
+    .exp-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-style: italic;
+      color: rgba(245,245,240,0.85); line-height: 1.7; margin-bottom: 20px;
+    }
+    .exp-quote cite { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-style: normal; }
+
+    /* ─── CTA FINAL ─── */
+    .cta-final {
+      background: var(--black); text-align: center; padding: 120px 48px;
+      position: relative; overflow: hidden;
+    }
+    .cta-final::before {
+      content: ''; position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-final-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+    .cta-final h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 700; line-height: 1.1;
+      color: var(--white); margin-bottom: 20px;
+    }
+    .cta-final p { font-size: 15px; font-weight: 300; color: var(--muted); margin-bottom: 40px; line-height: 1.8; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; text-align: left; }
+    .contact-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.07); padding: 24px 28px; }
+    .contact-card-label { font-size: 10px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .contact-card-val { font-size: 14px; color: var(--white); font-weight: 400; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--panel);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ledPulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(0,170,255,0.15), inset 0 0 40px rgba(0,0,0,0.5); }
+      50%       { box-shadow: 0 0 50px rgba(0,170,255,0.25), inset 0 0 40px rgba(0,0,0,0.5); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+    .dot-live {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--led-green); border-radius: 50%;
+      margin-right: 8px; animation: blink 2s ease infinite; vertical-align: middle;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      section { padding: 72px 24px; }
+      .viz-cards-section { padding: 56px 24px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .ad-grid { grid-template-columns: 1fr; }
+      .ad-arrow { transform: rotate(90deg); margin: 16px auto; }
+      .proyecto-grid { grid-template-columns: 1fr; gap: 40px; }
+      .ventajas-grid { grid-template-columns: 1fr; }
+      .exp-intro { grid-template-columns: 1fr; gap: 40px; }
+      .viz-cards { grid-template-columns: 1fr; }
+      .modelo-info { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+      .viz-caption-inner { flex-direction: column; align-items: flex-start; }
+      .viz-caption { padding: 24px; }
+    }
+    @media (max-width: 600px) {
+      .stats-strip { grid-template-columns: 1fr; }
+      .exp-items { grid-template-columns: 1fr; }
+      .modelo-tabs { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Publimetal <span>× Hipódromo Chile</span></div>
+    <a href="#contacto" class="nav-cta">Ver propuesta</a>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       BLOQUE 1 · HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="./HCH_web_nueva_Led-03.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="dot-live"></span>
+        Nuevo soporte audiovisual premium · Hipódromo Chile
+      </div>
+      <h1>La nueva pantalla<br/><em>gigante</em> que<br/>transformará</h1>
+      <p class="hero-subtitle">la experiencia del Hipódromo Chile</p>
+      <p class="hero-desc">
+        Un soporte LED de gran formato diseñado para elevar la experiencia del público,
+        potenciar la información en vivo y abrir una nueva vitrina de alto impacto
+        para marcas y auspiciadores.
+      </p>
+      <div class="hero-actions">
+        <a href="#antes-despues" class="btn-primary">Ver oportunidad comercial</a>
+        <a href="#modelo3d" class="btn-ghost">&#9654; Explorar proyecto 3D</a>
+      </div>
+      <p style="margin-top:24px; font-size:12px; color:rgba(245,245,240,0.35); letter-spacing:0.1em;">
+        &#9675;&nbsp; Diseñado para exterior, alta visibilidad y operación continua en eventos de gran convocatoria
+      </p>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">40</div>
+      <div class="stat-label">Años de experiencia</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">+50</div>
+      <div class="stat-label">Pantallas LED instaladas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1°</div>
+      <div class="stat-label">Ingeniería U. de Chile</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">360°</div>
+      <div class="stat-label">Servicio integral</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOQUE 2 · ANTES / DESPUÉS
+  ══════════════════════════════════════════ -->
+  <section class="antes-despues" id="antes-despues">
+    <div class="section-inner">
+      <div class="ad-intro">
+        <div class="section-label">Transformación del espacio</div>
+        <h2 class="section-title">Del tablero actual<br/>a la pantalla LED gigante integrada</h2>
+        <p class="section-body">
+          Una comparación directa del recinto tal como existe hoy versus cómo se verá
+          con la nueva pantalla LED instalada. El mismo lugar. Una experiencia radicalmente distinta.
+        </p>
+      </div>
+
+      <div class="ad-grid">
+        <!-- ANTES -->
+        <div class="ad-card">
+          <div class="ad-card-header">
+            <span class="ad-badge antes">Antes</span>
+            <span class="ad-card-title">Tablero actual</span>
+          </div>
+          <div class="ad-visual">
+            <!--
+              IMAGEN ANTES: foto real del hipódromo con tablero actual
+              <img src="./foto-tablero-actual.jpg" alt="Tablero actual Hipódromo de Chile" />
+            -->
+            <div class="ad-placeholder">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="1"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>foto-tablero-actual.jpg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLECHA -->
+        <div class="ad-arrow">
+          <div class="ad-arrow-circle">
+            <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+
+        <!-- DESPUÉS -->
+        <div class="ad-card">
+          <div class="ad-card-header">
+            <span class="ad-badge despues">Después</span>
+            <span class="ad-card-title">Pantalla LED gigante integrada</span>
+          </div>
+          <div class="ad-visual">
+            <!--
+              IMAGEN DESPUÉS: foto con render de la pantalla LED integrada al recinto
+              <img src="./foto-con-pantalla-led.jpg" alt="Pantalla LED integrada Hipódromo de Chile" />
+            -->
+            <div class="ad-placeholder">
+              <svg viewBox="0 0 24 24" style="stroke:var(--gold);opacity:0.6;"><rect x="3" y="3" width="18" height="14" rx="1"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span style="color:rgba(201,168,76,0.6);">foto-con-pantalla-led.jpg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       BLOQUE 3 · VISUALIZACIÓN EN RECINTO
+       (pantalla en recinto, estados: vacía → en vivo)
+  ══════════════════════════════════════════ -->
+  <div class="visualizacion" id="visualizacion">
+
+    <!-- Imagen principal: pantalla en el recinto (estado en vivo / transmisión) -->
+    <div class="viz-hero">
+      <div class="viz-image-wrap">
+        <!--
+          IMAGEN PRINCIPAL del recinto con pantalla mostrando la carrera:
+          <img src="./recinto-pantalla-en-vivo.jpg" alt="Pantalla LED Hipódromo mostrando transmisión en vivo" />
+
+          Si tienes los 4 estados, muestra el más impactante aquí:
+          · recinto-pantalla-vacia.jpg        (pantalla en blanco, encendiéndose)
+          · recinto-pantalla-carrera.jpg      (transmisión de carrera en directo) ← este va aquí
+          · recinto-pantalla-llegada.jpg      (foto del ganador)
+          · recinto-pantalla-publicidad.jpg   (aviso de marca)
+        -->
+
+        <!-- PLACEHOLDER SIMULADO — reemplazar con <img> cuando tengas las fotos -->
+        <div class="viz-placeholder">
+          <!-- Simulación visual del hipódromo con pantalla -->
+          <div class="viz-sim-screen">
+            <div class="viz-sim-screen-inner">
+              <span class="dot-live"></span> CARRERA EN VIVO<br/>
+              <small style="font-size:10px;opacity:0.6;letter-spacing:0.2em;">HIPÓDROMO DE CHILE</small>
+            </div>
+          </div>
+          <div class="viz-sim-tablero">
+            <div class="viz-sim-dot" style="background:#e74c3c;"></div>
+            <div class="viz-sim-dot" style="background:#3498db;"></div>
+            <div class="viz-sim-dot" style="background:#2ecc71;"></div>
+            <div class="viz-sim-dot" style="background:#f39c12;"></div>
+            <div class="viz-sim-dot" style="background:#9b59b6;"></div>
+            <div class="viz-sim-dot" style="background:#1abc9c;"></div>
+          </div>
+          <!-- pista -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:22%;background:linear-gradient(to bottom,#2d1a0a,#1a0d05);border-top:3px solid #fff3;"></div>
+        </div>
+      </div>
+
+      <div class="viz-caption">
+        <div class="viz-caption-inner">
+          <div class="viz-caption-text">
+            <strong>Escala, visibilidad y protagonismo</strong> en el corazón de la experiencia
+          </div>
+          <div class="viz-tags">
+            <span class="viz-tag">Eje principal de atención</span>
+            <span class="viz-tag">Escala que se percibe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards de atributos clave -->
+    <div class="viz-cards-section">
+      <div class="section-inner" style="margin:0 auto;">
+        <div class="section-label">Lo que cambia con la pantalla</div>
+        <h2 class="section-title">Vista desde el recinto</h2>
+      </div>
+      <div class="viz-cards">
+        <div class="viz-card">
+          <div class="viz-card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <div class="viz-card-title">Eje principal de atención</div>
+          <div class="viz-card-desc">La pantalla pasa a ser el punto focal natural del recinto. Toda mirada en la pista converge hacia ella durante las carreras.</div>
+        </div>
+        <div class="viz-card">
+          <div class="viz-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+          </div>
+          <div class="viz-card-title">Escala que se percibe</div>
+          <div class="viz-card-desc">Dimensiones diseñadas para ser legibles desde cualquier punto del graderío, con impacto visual en exteriores e ingresos al recinto.</div>
+        </div>
+        <div class="viz-card">
+          <div class="viz-card-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="viz-card-title">Información en tiempo real</div>
+          <div class="viz-card-desc">Transmisión en vivo, foto del ganador, estadísticas de carrera y tablero de apuestas integrado. Todo en un solo soporte.</div>
+        </div>
+        <div class="viz-card">
+          <div class="viz-card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="viz-card-title">Vitrina publicitaria premium</div>
+          <div class="viz-card-desc">Superficie dinámica para marcas y auspiciadores con rotación de avisos, activaciones y contenido patrocinado durante el evento.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BLOQUE 4 · MODELO 3D
+  ══════════════════════════════════════════ -->
+  <section class="modelo3d" id="modelo3d">
+    <div class="section-inner">
+      <div class="modelo3d-header">
+        <div class="section-label">Proyecto en 3D</div>
+        <h2 class="section-title">Explorar el modelo<br/>a escala real</h2>
+        <p class="section-body">
+          El modelo tridimensional del proyecto muestra la integración exacta de la
+          pantalla LED dentro del recinto del Hipódromo de Chile, con su estructura
+          de soporte y presencia real en el espacio.
+        </p>
+      </div>
+
+      <div class="modelo-viewer">
+        <!--
+          ════════════════════════════════════════════
+          OPCIÓN A — Embed directo de SketchUp (si tienes URL pública del modelo):
+          <iframe
+            src="https://app.sketchup.com/viewer/3dw/XXXXXXXXX"
+            allow="fullscreen"
+            loading="lazy">
+          </iframe>
+
+          OPCIÓN B — Si el archivo es local (.skp), súbelo a SketchUp Free / 3D Warehouse
+          y copia la URL del viewer que te entregan.
+
+          OPCIÓN C — Si usas otra plataforma (Matterport, Sketchfab, etc.):
+          <iframe src="https://sketchfab.com/models/XXXXXXX/embed" allowfullscreen></iframe>
+
+          Por ahora se muestra el placeholder con instrucciones.
+          ════════════════════════════════════════════
+        -->
+        <div class="modelo-placeholder">
+          <div class="modelo-placeholder-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="modelo-placeholder-text">
+            <p>Pega aquí el embed del modelo SketchUp</p>
+            <code>archivo: HCH-pantalla-totatizdr</code>
+          </div>
+        </div>
+        <div class="modelo-corner tl"></div>
+        <div class="modelo-corner tr"></div>
+        <div class="modelo-corner bl"></div>
+        <div class="modelo-corner br"></div>
+      </div>
+
+      <!-- Tabs de escenas del modelo -->
+      <div class="modelo-info">
+        <div class="modelo-info-card active" onclick="this.classList.add('active');this.nextElementSibling.classList.remove('active')">
+          <div class="modelo-info-num">Modelo 01</div>
+          <div class="modelo-info-title">Integración general</div>
+          <div class="modelo-info-desc">Vista general del proyecto en su ubicación dentro del recinto.</div>
+        </div>
+        <div class="modelo-info-card" onclick="this.classList.add('active');this.previousElementSibling.classList.remove('active')">
+          <div class="modelo-info-num">Modelo 02</div>
+          <div class="modelo-info-title">Estructura y soporte</div>
+          <div class="modelo-info-desc">Vista técnica de integración estructural y presencia del sistema.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       ESPECIFICACIONES TÉCNICAS
+  ══════════════════════════════════════════ -->
+  <section class="proyecto" id="proyecto">
+    <div class="section-inner">
+      <div class="section-label">El proyecto técnico</div>
+      <h2 class="section-title">Nueva Pantalla LED<br/>Hipódromo de Chile</h2>
+      <p class="section-body">
+        Diseño, cálculo estructural, fabricación e instalación integral.
+        Un solo equipo responsable de todo el proceso, con firma profesional certificada.
+      </p>
+
+      <div class="proyecto-grid">
+        <div class="proyecto-visual">
+          <!--
+            Aquí puedes poner imagen del render o foto real de la estructura:
+            <img src="./render-estructura.jpg" style="width:100%;height:100%;object-fit:cover;" />
+          -->
+          <div class="led-frame">
+            <div class="led-screen">
+              <div class="led-screen-text">
+                HIPÓDROMO<br/>DE CHILE<br/>
+                <small style="font-size:10px;letter-spacing:0.3em;opacity:0.7;">NUEVA PANTALLA LED</small>
+              </div>
+            </div>
+            <div class="led-pillar"></div>
+            <div class="led-base"></div>
+          </div>
+          <div class="proyecto-corner tl"></div>
+          <div class="proyecto-corner tr"></div>
+          <div class="proyecto-corner bl"></div>
+          <div class="proyecto-corner br"></div>
+        </div>
+
+        <div class="specs-list">
+          <div class="spec-row">
+            <div class="spec-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="1"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="15" x2="12" y2="21"/></svg></div>
+            <div>
+              <div class="spec-name">Tecnología</div>
+              <div class="spec-val">Pantalla electrónica LED full color, alta resolución, apta para luz solar directa</div>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+            <div>
+              <div class="spec-name">Estructura</div>
+              <div class="spec-val">Diseño y cálculo estructural certificado por Ingeniero Civil U. de Chile. Memoria de cálculo, planos y firmas profesionales incluidos</div>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div>
+              <div class="spec-name">Tramitación</div>
+              <div class="spec-val">Gestión completa de permisos municipales, plano de emplazamiento y toda la documentación técnica necesaria</div>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div>
+              <div class="spec-name">Mantención</div>
+              <div class="spec-val">Estructura diseñada para acceso posterior a los módulos. Sistema de fácil mantención y reposición de paneles</div>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div>
+              <div class="spec-name">Ingeniería</div>
+              <div class="spec-val">Asesoría en ubicación, orientación y altura óptima según audiencias y líneas de visión del recinto hípico</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENTAJAS -->
+  <section class="ventajas">
+    <div class="section-inner">
+      <div class="section-label">¿Por qué esta inversión?</div>
+      <h2 class="section-title">Lo que transforma<br/>una pantalla LED</h2>
+      <div class="ventajas-grid">
+        <div class="ventaja-card">
+          <span class="ventaja-num">01</span>
+          <div class="ventaja-title">Experiencia del espectador</div>
+          <div class="ventaja-desc">Transmisiones en directo, foto del ganador, estadísticas y programación de carreras con máxima claridad, incluso bajo luz solar intensa.</div>
+        </div>
+        <div class="ventaja-card">
+          <span class="ventaja-num">02</span>
+          <div class="ventaja-title">Ingresos publicitarios</div>
+          <div class="ventaja-desc">Superficie publicitaria dinámica con capacidad de rotación de avisos, activaciones de marca y contenido patrocinado en tiempo real.</div>
+        </div>
+        <div class="ventaja-card">
+          <span class="ventaja-num">03</span>
+          <div class="ventaja-title">Modernización del recinto</div>
+          <div class="ventaja-desc">Posicionamiento del Hipódromo de Chile como referente de eventos deportivos de clase mundial en Latinoamérica.</div>
+        </div>
+        <div class="ventaja-card">
+          <span class="ventaja-num">04</span>
+          <div class="ventaja-title">Durabilidad comprobada</div>
+          <div class="ventaja-desc">Gabinetes electrónicos de estándar internacional. Peso y cargas de viento calculados con metodología de ingeniería civil certificada.</div>
+        </div>
+        <div class="ventaja-card">
+          <span class="ventaja-num">05</span>
+          <div class="ventaja-title">Proceso llave en mano</div>
+          <div class="ventaja-desc">Desde el diseño estructural hasta la instalación y tramitación de permisos. Un solo interlocutor responsable de todo el proyecto.</div>
+        </div>
+        <div class="ventaja-card">
+          <span class="ventaja-num">06</span>
+          <div class="ventaja-title">Antecedente directo</div>
+          <div class="ventaja-desc">Publimetal ya tiene experiencia instalando pantallas LED en el propio Hipódromo de Chile — el recinto conoce nuestra calidad de trabajo.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCIA -->
+  <section class="experiencia" id="experiencia">
+    <div class="section-inner">
+      <div class="exp-intro">
+        <div>
+          <div class="section-label">Trayectoria Publimetal</div>
+          <h2 class="section-title">40 años construyendo<br/>la publicidad exterior<br/>de Chile</h2>
+          <p class="section-body" style="max-width:100%;">
+            Alejandro Medina Turner, Ingeniero Civil de la Universidad de Chile,
+            lidera Publimetal con cuatro décadas de experiencia en diseño y cálculo
+            estructural de soportes para publicidad exterior: pantallas LED, letreros
+            monumentales, unipoles, sobreterraza y mobiliario urbano.
+          </p>
+          <div class="exp-quote" style="margin-top:36px;">
+            <p>"El diseño estructural de una pantalla LED no es solo ingeniería —
+            es garantizar que la inversión del cliente opere con seguridad y sin
+            interrupciones durante décadas."</p>
+            <cite>Alejandro Medina Turner · Ingeniero Civil U. de Chile · Publimetal</cite>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Proyectos destacados</div>
+          <div class="exp-items">
+            <div class="exp-item">
+              <div class="exp-item-place">Hipódromo de Chile</div>
+              <div class="exp-item-type">Pantalla LED · Sector foto ganador</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Estadio La Serena</div>
+              <div class="exp-item-type">Pantalla LED perimetral</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Estadio Sausalito</div>
+              <div class="exp-item-type">Pantalla LED · Viña del Mar</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Parque Arauco</div>
+              <div class="exp-item-type">Pantalla LED interior</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Mall Arauco Maipú</div>
+              <div class="exp-item-type">Estructura LED gran formato</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Vicuña Mackenna</div>
+              <div class="exp-item-type">Pantalla LED vía pública</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Metro de Santiago</div>
+              <div class="exp-item-type">Estructuras publicitarias</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-item-place">Aeropuerto SCL</div>
+              <div class="exp-item-type">Instalaciones interiores LED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final" id="contacto">
+    <div class="cta-final-inner">
+      <div class="section-label">Siguiente paso</div>
+      <h2>¿Conversamos<br/>sobre el proyecto?</h2>
+      <p>
+        Solicite la propuesta técnica y económica completa.
+        Incluye diseño estructural, especificaciones del gabinete LED,
+        plazos de entrega y presupuesto de fabricación e instalación.
+      </p>
+      <a href="mailto:amedina@publimetal.cl" class="btn-primary">Solicitar propuesta formal</a>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-card-label">Contacto principal</div>
+          <div class="contact-card-val">Alejandro Medina Turner<br/>Ingeniero Civil · U. de Chile</div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-label">Correo electrónico</div>
+          <div class="contact-card-val">amedina@publimetal.cl<br/>publimetal@gmail.com</div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-label">Experiencia</div>
+          <div class="contact-card-val">40 años en estructuras<br/>para publicidad exterior</div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-label">Referencia directa</div>
+          <div class="contact-card-val">Pantalla LED sector foto ganador<br/>Hipódromo de Chile (instalada)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Publimetal Ltda. · Santiago de Chile</div>
+    <div class="footer-copy">Propuesta confidencial para Hipódromo de Chile · 2025</div>
+  </footer>
+
+</body>
+</html>
